@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="ParkingManagement" Class="ParkingManagementDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=.\SQLEXPRESS;AttachDbFilename=|DataDirectory|\ParkingManagement.mdf;Integrated Security=True;User Instance=True" SettingsObjectName="ParkingManagement.Properties.Settings" SettingsPropertyName="ParkingManagementConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Admin" Member="Admins">
+    <Type Name="Admin">
+      <Column Name="EmployeeID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Email" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Vehicle" Member="Vehicles">
+    <Type Name="Vehicle">
+      <Column Name="VehicleID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CarModel" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="LicensePlateID" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Association Name="Vehicle_CustomerVehicle" Member="CustomerVehicles" ThisKey="VehicleID" OtherKey="VehicleID" Type="CustomerVehicle" />
+      <Association Name="Vehicle_Reservation" Member="Reservations" ThisKey="VehicleID" OtherKey="VehicleID" Type="Reservation" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CustomerCreditCard" Member="CustomerCreditCards">
+    <Type Name="CustomerCreditCard">
+      <Column Name="CustomerID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="CreditCardID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Customer_CustomerCreditCard" Member="Customer" ThisKey="CustomerID" OtherKey="CustomerID" Type="Customer" IsForeignKey="true" />
+      <Association Name="CreditCard_CustomerCreditCard" Member="CreditCard" ThisKey="CreditCardID" OtherKey="CardID" Type="CreditCard" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CustomerVehicle" Member="CustomerVehicles">
+    <Type Name="CustomerVehicle">
+      <Column Name="CustomerID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="VehicleID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Association Name="Vehicle_CustomerVehicle" Member="Vehicle" ThisKey="VehicleID" OtherKey="VehicleID" Type="Vehicle" IsForeignKey="true" />
+      <Association Name="Customer_CustomerVehicle" Member="Customer" ThisKey="CustomerID" OtherKey="CustomerID" Type="Customer" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.ParkingSpot" Member="ParkingSpots">
+    <Type Name="ParkingSpot">
+      <Column Name="ParkingSpotID" Type="System.Int32" DbType="Int NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="AvailabilityStatus" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Association Name="ParkingSpot_Reservation" Member="Reservations" ThisKey="ParkingSpotID" OtherKey="ParkingSpotID" Type="Reservation" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Customer" Member="Customers">
+    <Type Name="Customer">
+      <Column Name="CustomerID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="LastName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="FirstName" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="PhoneNumber" Type="System.String" DbType="NVarChar(50)" CanBeNull="true" />
+      <Column Name="Email" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="Password" Type="System.String" DbType="NVarChar(50) NOT NULL" CanBeNull="false" />
+      <Association Name="Customer_CustomerCreditCard" Member="CustomerCreditCards" ThisKey="CustomerID" OtherKey="CustomerID" Type="CustomerCreditCard" />
+      <Association Name="Customer_CustomerVehicle" Member="CustomerVehicles" ThisKey="CustomerID" OtherKey="CustomerID" Type="CustomerVehicle" />
+      <Association Name="Customer_Reservation" Member="Reservations" ThisKey="CustomerID" OtherKey="CustomerID" Type="Reservation" />
+      <Association Name="Customer_Transaction" Member="Transactions" ThisKey="CustomerID" OtherKey="CustomerID" Type="Transaction" />
+    </Type>
+  </Table>
+  <Table Name="dbo.CreditCard" Member="CreditCards">
+    <Type Name="CreditCard">
+      <Column Name="CardID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CardType" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="CardNumber" Type="System.Int64" DbType="BigInt" CanBeNull="true" />
+      <Association Name="CreditCard_CustomerCreditCard" Member="CustomerCreditCards" ThisKey="CardID" OtherKey="CreditCardID" Type="CustomerCreditCard" />
+      <Association Name="CreditCard_Transaction" Member="Transactions" ThisKey="CardID" OtherKey="CreditCardID" Type="Transaction" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Reservation" Member="Reservations">
+    <Type Name="Reservation">
+      <Column Name="ReservationID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CustomerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="VehicleID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="DateTime" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Column Name="DurationMinutes" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="ParkingSpotID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TicketKey" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsCheckedIn" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Association Name="Reservation_Transaction" Member="Transactions" ThisKey="ReservationID" OtherKey="ReservationID" Type="Transaction" />
+      <Association Name="Customer_Reservation" Member="Customer" ThisKey="CustomerID" OtherKey="CustomerID" Type="Customer" IsForeignKey="true" />
+      <Association Name="ParkingSpot_Reservation" Member="ParkingSpot" ThisKey="ParkingSpotID" OtherKey="ParkingSpotID" Type="ParkingSpot" IsForeignKey="true" />
+      <Association Name="Vehicle_Reservation" Member="Vehicle" ThisKey="VehicleID" OtherKey="VehicleID" Type="Vehicle" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.[Transaction]" Member="Transactions">
+    <Type Name="Transaction">
+      <Column Name="TransactionID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="CustomerID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="ReservationID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="IsFine" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="CreditCardID" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="TransactionDate" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="CreditCard_Transaction" Member="CreditCard" ThisKey="CreditCardID" OtherKey="CardID" Type="CreditCard" IsForeignKey="true" />
+      <Association Name="Customer_Transaction" Member="Customer" ThisKey="CustomerID" OtherKey="CustomerID" Type="Customer" IsForeignKey="true" />
+      <Association Name="Reservation_Transaction" Member="Reservation" ThisKey="ReservationID" OtherKey="ReservationID" Type="Reservation" IsForeignKey="true" DeleteRule="CASCADE" DeleteOnNull="true" />
+    </Type>
+  </Table>
+</Database>
